@@ -1,0 +1,1578 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>國教盟知識王 🎯</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap');
+
+:root {
+  --primary: #3D4451;
+  --primary-light: #4F5666;
+  --accent: #E86E4E;
+  --accent-dark: #D15A3A;
+  --accent-light: #F5A623;
+  --bg: #F8F9FA;
+  --success: #10B981;
+  --wrong: #EF4444;
+  --gold: #FFD700;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Noto Sans TC', sans-serif;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+  min-height: 100vh;
+  min-height: -webkit-fill-available;
+  color: white;
+  overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html { height: -webkit-fill-available; }
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 16px;
+  min-height: 100vh;
+  min-height: -webkit-fill-available;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 粒子背景 */
+.particles {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.particle {
+  position: absolute;
+  background: rgba(255,255,255,0.1);
+  border-radius: 50%;
+  animation: float 15s infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
+}
+
+/* ==================== 開始畫面 ==================== */
+.start-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  min-height: -webkit-fill-available;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+  padding: 20px;
+}
+
+.logo {
+  font-size: 5rem;
+  margin-bottom: 0.5rem;
+  animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
+
+.title {
+  font-size: clamp(2rem, 8vw, 4rem);
+  font-weight: 900;
+  margin-bottom: 0.5rem;
+  text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  background: linear-gradient(135deg, #fff 0%, var(--accent-light) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.subtitle {
+  font-size: clamp(0.9rem, 3vw, 1.5rem);
+  opacity: 0.9;
+  margin-bottom: 2rem;
+}
+
+.start-btn {
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+  color: white;
+  border: none;
+  padding: 1.25rem 3rem;
+  font-size: clamp(1.1rem, 4vw, 1.5rem);
+  font-weight: 700;
+  border-radius: 60px;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-family: inherit;
+  box-shadow: 0 10px 40px rgba(232,110,78,0.4);
+  position: relative;
+  overflow: hidden;
+}
+
+.start-btn::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  animation: shine 2s infinite;
+}
+
+@keyframes shine {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+
+.start-btn:hover {
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: 0 15px 50px rgba(232,110,78,0.5);
+}
+
+.start-btn:active { transform: scale(0.98); }
+
+.stats-preview {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.stat-item {
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(10px);
+  padding: 1rem 1.5rem;
+  border-radius: 16px;
+  text-align: center;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.stat-num {
+  font-size: clamp(1.5rem, 5vw, 2rem);
+  font-weight: 900;
+  color: var(--accent);
+}
+
+.stat-label { font-size: 0.8rem; opacity: 0.8; }
+
+/* 音效控制 */
+.sound-toggle {
+  position: fixed;
+  top: 20px; right: 20px;
+  background: rgba(255,255,255,0.15);
+  border: none;
+  width: 50px; height: 50px;
+  border-radius: 50%;
+  font-size: 1.5rem;
+  cursor: pointer;
+  z-index: 1000;
+  transition: all 0.3s;
+}
+
+.sound-toggle:hover {
+  background: rgba(255,255,255,0.25);
+  transform: scale(1.1);
+}
+
+/* ==================== 遊戲畫面 ==================== */
+.game-screen {
+  display: none;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: -webkit-fill-available;
+  position: relative;
+  z-index: 1;
+}
+
+.game-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.progress-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.question-num {
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.timer-container {
+  position: relative;
+  width: 60px; height: 60px;
+}
+
+.timer-ring { transform: rotate(-90deg); }
+
+.timer-ring circle {
+  fill: none;
+  stroke-width: 4;
+}
+
+.timer-ring .bg { stroke: rgba(255,255,255,0.2); }
+.timer-ring .progress {
+  stroke: var(--accent);
+  stroke-linecap: round;
+  transition: stroke-dashoffset 1s linear;
+}
+
+.timer-ring.warning .progress { stroke: #FCD34D; }
+.timer-ring.danger .progress { stroke: var(--wrong); }
+
+.timer-text {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.25rem;
+  font-weight: 900;
+}
+
+.timer-text.danger {
+  animation: pulse 0.5s infinite;
+  color: var(--wrong);
+}
+
+@keyframes pulse {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); }
+  50% { transform: translate(-50%, -50%) scale(1.2); }
+}
+
+.score-display {
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(10px);
+  padding: 0.5rem 1rem;
+  border-radius: 12px;
+  text-align: center;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.score-label { font-size: 0.75rem; opacity: 0.8; }
+.score-num { font-size: 1.25rem; font-weight: 900; color: var(--gold); }
+
+/* Combo 顯示 */
+.combo {
+  position: fixed;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 4rem;
+  font-weight: 900;
+  color: var(--gold);
+  text-shadow: 0 0 30px rgba(255,215,0,0.8);
+  animation: comboAnim 1s forwards;
+  pointer-events: none;
+  z-index: 100;
+}
+
+@keyframes comboAnim {
+  0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+  50% { transform: translate(-50%, -50%) scale(1.5); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(1); opacity: 0; }
+}
+
+/* 題目區 */
+.question-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+}
+
+.category-tag {
+  background: rgba(255,255,255,0.2);
+  backdrop-filter: blur(10px);
+  padding: 0.4rem 1.25rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  margin-bottom: 1rem;
+  animation: fadeInDown 0.5s;
+}
+
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.question-text {
+  font-size: clamp(1.25rem, 5vw, 2.25rem);
+  font-weight: 700;
+  text-align: center;
+  line-height: 1.5;
+  max-width: 900px;
+  margin-bottom: 2rem;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+  animation: fadeIn 0.5s;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* 選項 */
+.options-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  width: 100%;
+  max-width: 700px;
+}
+
+.option-btn {
+  background: rgba(255,255,255,0.12);
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255,255,255,0.2);
+  color: white;
+  padding: 1rem 1.25rem;
+  font-size: clamp(0.95rem, 3vw, 1.15rem);
+  font-weight: 600;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  animation: optionIn 0.4s backwards;
+}
+
+.option-btn:nth-child(1) { animation-delay: 0.1s; }
+.option-btn:nth-child(2) { animation-delay: 0.2s; }
+.option-btn:nth-child(3) { animation-delay: 0.3s; }
+.option-btn:nth-child(4) { animation-delay: 0.4s; }
+
+@keyframes optionIn {
+  from { opacity: 0; transform: translateX(-30px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.option-btn:hover:not(:disabled) {
+  background: rgba(255,255,255,0.25);
+  transform: translateX(5px);
+  border-color: var(--accent);
+}
+
+.option-btn:active:not(:disabled) { transform: scale(0.98); }
+.option-btn:disabled { cursor: not-allowed; }
+
+.option-btn.correct {
+  background: var(--success) !important;
+  border-color: var(--success) !important;
+  animation: correctPop 0.5s;
+}
+
+.option-btn.wrong {
+  background: var(--wrong) !important;
+  border-color: var(--wrong) !important;
+  opacity: 0.6;
+}
+
+@keyframes correctPop {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+}
+
+.option-letter {
+  background: rgba(255,255,255,0.2);
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  flex-shrink: 0;
+  font-size: 0.9rem;
+}
+
+/* ==================== 答案揭曉 ==================== */
+.answer-reveal {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 1.5rem;
+  flex: 1;
+  animation: fadeIn 0.5s;
+}
+
+.reveal-icon {
+  font-size: 5rem;
+  margin-bottom: 0.5rem;
+  animation: popIn 0.5s;
+}
+
+@keyframes popIn {
+  0% { transform: scale(0) rotate(-180deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+
+.reveal-text {
+  font-size: clamp(1.5rem, 6vw, 2.5rem);
+  font-weight: 900;
+  margin-bottom: 0.5rem;
+}
+
+.reveal-roast {
+  font-size: clamp(1rem, 4vw, 1.25rem);
+  opacity: 0.95;
+  margin-bottom: 1rem;
+  padding: 0.75rem 1.5rem;
+  background: rgba(255,255,255,0.15);
+  border-radius: 12px;
+  max-width: 500px;
+  border-left: 4px solid var(--accent);
+}
+
+.reveal-detail {
+  font-size: clamp(0.9rem, 3vw, 1.1rem);
+  opacity: 0.85;
+  max-width: 600px;
+  margin: 0 auto 1.5rem;
+  line-height: 1.6;
+  padding: 1rem;
+  background: rgba(0,0,0,0.2);
+  border-radius: 12px;
+}
+
+.next-btn {
+  background: linear-gradient(135deg, #fff 0%, #f0f0f0 100%);
+  color: var(--primary);
+  border: none;
+  padding: 1rem 2.5rem;
+  font-size: clamp(1rem, 4vw, 1.25rem);
+  font-weight: 700;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-family: inherit;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+}
+
+.next-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.next-btn:active { transform: scale(0.98); }
+
+/* ==================== 結束畫面 ==================== */
+.end-screen {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  min-height: -webkit-fill-available;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+  padding: 20px;
+}
+
+.confetti {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.end-icon {
+  font-size: 6rem;
+  margin-bottom: 0.5rem;
+  animation: bounce 1s infinite;
+}
+
+.end-title {
+  font-size: clamp(2rem, 8vw, 3.5rem);
+  font-weight: 900;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(135deg, var(--gold) 0%, #fff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.end-score {
+  font-size: clamp(3rem, 12vw, 5rem);
+  font-weight: 900;
+  color: var(--accent);
+  margin: 0.5rem 0;
+  text-shadow: 0 0 30px rgba(232,110,78,0.5);
+}
+
+.end-message {
+  font-size: clamp(1rem, 4vw, 1.5rem);
+  opacity: 0.9;
+  margin-bottom: 2rem;
+  padding: 1rem 2rem;
+  background: rgba(255,255,255,0.1);
+  border-radius: 16px;
+}
+
+.restart-btn {
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+  color: white;
+  border: none;
+  padding: 1rem 2.5rem;
+  font-size: clamp(1rem, 4vw, 1.25rem);
+  font-weight: 700;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-family: inherit;
+  box-shadow: 0 10px 30px rgba(232,110,78,0.4);
+}
+
+.restart-btn:hover { transform: scale(1.05); }
+
+/* 主持人控制列 */
+.host-controls {
+  position: fixed;
+  bottom: 20px; left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(10px);
+  padding: 0.6rem 1.25rem;
+  border-radius: 30px;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  font-size: 0.8rem;
+  z-index: 100;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.host-controls kbd {
+  background: var(--accent);
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-family: inherit;
+  font-weight: 700;
+}
+
+/* 進度條 */
+.progress-bar {
+  position: fixed;
+  top: 0; left: 0;
+  height: 4px;
+  background: var(--accent);
+  transition: width 0.3s;
+  z-index: 1000;
+}
+
+/* 閃光特效 */
+.screen-flash {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+  animation: flashAnim 0.5s forwards;
+}
+
+.screen-flash.success { background: radial-gradient(circle, rgba(16,185,129,0.4) 0%, transparent 70%); }
+.screen-flash.wrong { background: radial-gradient(circle, rgba(239,68,68,0.4) 0%, transparent 70%); }
+.screen-flash.warning { background: radial-gradient(circle, rgba(252,211,77,0.4) 0%, transparent 70%); }
+
+@keyframes flashAnim {
+  0% { opacity: 0; }
+  30% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* 震動特效 */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+  20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+body.shake { animation: shake 0.5s; }
+
+/* 星星爆炸 */
+.stars-burst {
+  position: fixed;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 100;
+}
+
+.star {
+  position: absolute;
+  font-size: 2rem;
+  animation: starBurst 0.8s forwards;
+}
+
+@keyframes starBurst {
+  0% { transform: translate(0, 0) scale(0); opacity: 1; }
+  100% { transform: translate(var(--tx), var(--ty)) scale(1); opacity: 0; }
+}
+
+/* 響應式 */
+@media (max-width: 768px) {
+  .options-grid { grid-template-columns: 1fr; gap: 0.6rem; }
+  .option-btn { padding: 0.9rem 1rem; }
+  .host-controls { display: none; }
+  .timer-container { width: 50px; height: 50px; }
+  .timer-text { font-size: 1rem; }
+  .stat-item { padding: 0.75rem 1rem; }
+  .logo { font-size: 4rem; }
+  .reveal-icon { font-size: 4rem; }
+  .end-icon { font-size: 5rem; }
+}
+
+@media (max-width: 380px) {
+  .container { padding: 10px; }
+  .question-text { font-size: 1.1rem; }
+  .option-btn { padding: 0.75rem; font-size: 0.9rem; }
+  .option-letter { width: 30px; height: 30px; font-size: 0.8rem; }
+}
+
+.hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+<div class="particles" id="particles"></div>
+<button class="sound-toggle" id="soundToggle" onclick="toggleSound()">🔊</button>
+
+<!-- 開始畫面 -->
+<div class="start-screen" id="startScreen">
+  <div class="logo">🎯</div>
+  <h1 class="title">國教盟知識王</h1>
+  <p class="subtitle">第四屆會員大會 ｜ 三年倡議回顧挑戰</p>
+  <button class="start-btn" onclick="startGame()">🚀 開始挑戰！</button>
+  <div class="stats-preview">
+    <div class="stat-item">
+      <div class="stat-num">15</div>
+      <div class="stat-label">道題目</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">113</div>
+      <div class="stat-label">篇新聞稿</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">7917</div>
+      <div class="stat-label">則媒體聲量</div>
+    </div>
+  </div>
+</div>
+
+<!-- 遊戲畫面 -->
+<div class="game-screen" id="gameScreen">
+  <div class="game-header">
+    <div class="progress-info">
+      <span class="question-num" id="questionNum">第 1 / 15 題</span>
+      <div class="timer-container">
+        <svg class="timer-ring" id="timerRing" width="60" height="60" viewBox="0 0 60 60">
+          <circle class="bg" cx="30" cy="30" r="26"/>
+          <circle class="progress" id="timerProgress" cx="30" cy="30" r="26" 
+                  stroke-dasharray="163.36" stroke-dashoffset="0"/>
+        </svg>
+        <span class="timer-text" id="timer">15</span>
+      </div>
+    </div>
+    <div class="score-display">
+      <div class="score-label">得分</div>
+      <div class="score-num" id="score">0</div>
+    </div>
+  </div>
+  
+  <div class="question-area" id="questionArea">
+    <div class="category-tag" id="category">數據題</div>
+    <div class="question-text" id="questionText">題目載入中...</div>
+    <div class="options-grid" id="optionsGrid"></div>
+  </div>
+  
+  <div class="answer-reveal" id="answerReveal">
+    <div class="reveal-icon" id="revealIcon">✅</div>
+    <div class="reveal-text" id="revealText">答對了！</div>
+    <div class="reveal-roast" id="revealRoast"></div>
+    <div class="reveal-detail" id="revealDetail">補充說明...</div>
+    <button class="next-btn" onclick="nextQuestion()">下一題 →</button>
+  </div>
+</div>
+
+<!-- 結束畫面 -->
+<div class="end-screen" id="endScreen">
+  <canvas class="confetti" id="confetti"></canvas>
+  <div class="end-icon" id="endIcon">🏆</div>
+  <h1 class="end-title">挑戰完成！</h1>
+  <div class="end-score" id="finalScore">0 / 15</div>
+  <p class="end-message" id="endMessage">你是國教盟資深會員！</p>
+  <button class="restart-btn" onclick="restartGame()">🔄 再玩一次</button>
+</div>
+
+<!-- 主持人控制 -->
+<div class="host-controls" id="hostControls">
+  <span><kbd>空白鍵</kbd> 揭曉</span>
+  <span><kbd>→</kbd> 下一題</span>
+  <span><kbd>R</kbd> 重來</span>
+</div>
+
+<script>
+// ==================== 音效系統 ====================
+let audioCtx = null;
+let soundEnabled = true;
+let bgmInterval = null;
+
+function initAudio() {
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+
+function playSound(type) {
+  if (!soundEnabled || !audioCtx) return;
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  
+  switch(type) {
+    case 'correct':
+      osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
+      osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1);
+      osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.2);
+      gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+      gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.5);
+      osc.start(audioCtx.currentTime);
+      osc.stop(audioCtx.currentTime + 0.5);
+      break;
+    case 'wrong':
+      osc.frequency.setValueAtTime(200, audioCtx.currentTime);
+      osc.frequency.setValueAtTime(150, audioCtx.currentTime + 0.15);
+      gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+      gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.3);
+      osc.start(audioCtx.currentTime);
+      osc.stop(audioCtx.currentTime + 0.3);
+      break;
+    case 'tick':
+      osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+      gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+      gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.05);
+      osc.start(audioCtx.currentTime);
+      osc.stop(audioCtx.currentTime + 0.05);
+      break;
+    case 'click':
+      osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+      gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+      gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.1);
+      osc.start(audioCtx.currentTime);
+      osc.stop(audioCtx.currentTime + 0.1);
+      break;
+    case 'start':
+      [523, 659, 784, 1047].forEach((freq, i) => {
+        const o = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
+        o.connect(g); g.connect(audioCtx.destination);
+        o.frequency.value = freq;
+        g.gain.setValueAtTime(0.2, audioCtx.currentTime + i * 0.1);
+        g.gain.linearRampToValueAtTime(0, audioCtx.currentTime + i * 0.1 + 0.3);
+        o.start(audioCtx.currentTime + i * 0.1);
+        o.stop(audioCtx.currentTime + i * 0.1 + 0.3);
+      });
+      break;
+    case 'win':
+      [523, 659, 784, 1047, 784, 1047].forEach((freq, i) => {
+        const o = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
+        o.connect(g); g.connect(audioCtx.destination);
+        o.frequency.value = freq;
+        g.gain.setValueAtTime(0.25, audioCtx.currentTime + i * 0.12);
+        g.gain.linearRampToValueAtTime(0, audioCtx.currentTime + i * 0.12 + 0.3);
+        o.start(audioCtx.currentTime + i * 0.12);
+        o.stop(audioCtx.currentTime + i * 0.12 + 0.3);
+      });
+      break;
+  }
+}
+
+function startBGM() {
+  if (!soundEnabled || !audioCtx || bgmInterval) return;
+  bgmInterval = setInterval(() => {
+    if (!soundEnabled || !audioCtx) return;
+    const now = audioCtx.currentTime;
+    const kick = audioCtx.createOscillator();
+    const kickGain = audioCtx.createGain();
+    kick.connect(kickGain); kickGain.connect(audioCtx.destination);
+    kick.frequency.setValueAtTime(150, now);
+    kick.frequency.exponentialRampToValueAtTime(50, now + 0.1);
+    kickGain.gain.setValueAtTime(0.12, now);
+    kickGain.gain.linearRampToValueAtTime(0, now + 0.15);
+    kick.start(now); kick.stop(now + 0.15);
+  }, 400);
+}
+
+function stopBGM() {
+  if (bgmInterval) { clearInterval(bgmInterval); bgmInterval = null; }
+}
+
+function toggleSound() {
+  soundEnabled = !soundEnabled;
+  document.getElementById('soundToggle').textContent = soundEnabled ? '🔊' : '🔇';
+  if (!soundEnabled) stopBGM();
+}
+
+// ==================== 語音系統 ====================
+let currentUtterance = null;
+
+function speak(text, rate = 1.1, pitch = 1.0) {
+  if (!soundEnabled) return;
+  if (currentUtterance) window.speechSynthesis.cancel();
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = 'zh-TW';
+  utterance.rate = rate;
+  utterance.pitch = pitch;
+  utterance.volume = 1;
+  const voices = window.speechSynthesis.getVoices();
+  const zhVoice = voices.find(v => v.lang.includes('zh') || v.lang.includes('TW'));
+  if (zhVoice) utterance.voice = zhVoice;
+  currentUtterance = utterance;
+  window.speechSynthesis.speak(utterance);
+}
+
+window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+
+// ==================== 吐槽語錄（超多變化版）====================
+const correctRoasts = [
+  { text: "哇～是資深會員沒錯了！👏", voice: "哇！是資深會員沒錯了！" },
+  { text: "這題難不倒你！太強了！💪", voice: "這題難不倒你！太強了！" },
+  { text: "你是不是偷看答案？🤔", voice: "你是不是偷看答案？" },
+  { text: "國教盟需要你這種人才！🌟", voice: "國教盟需要你這種人才！" },
+  { text: "答對！你比我還清楚耶～", voice: "答對！你比我還清楚耶！" },
+  { text: "秀啊！這都知道！🎉", voice: "秀啊！這都知道！" },
+  { text: "穩穩的！繼續保持！👍", voice: "穩穩的！繼續保持！" },
+  { text: "你是國教盟的忠實粉絲吧！", voice: "你是國教盟的忠實粉絲吧！" },
+  { text: "正確！看來有認真在關注～", voice: "正確！看來有認真在關注！" },
+  { text: "厲害厲害！再來一題！🔥", voice: "厲害厲害！再來一題！" },
+  { text: "可以喔～有在做功課！📚", voice: "可以喔！有在做功課！" },
+  { text: "這位同學，請上台領獎！🏆", voice: "這位同學，請上台領獎！" },
+  { text: "哎呀～被你答對了！", voice: "哎呀！被你答對了！" },
+  { text: "你484開外掛？🎮", voice: "你是不是開外掛？" },
+  { text: "Nice！這波很穩！😎", voice: "Nice！這波很穩！" },
+  { text: "優秀！理事長在看著你！👀", voice: "優秀！理事長在看著你！" },
+  { text: "太神啦～拜一下 🙏", voice: "太神啦！拜一下！" },
+  { text: "筆記抄起來！這位學霸！✏️", voice: "筆記抄起來！這位學霸！" },
+  { text: "嗯嗯，看來是自己人！😏", voice: "嗯嗯，看來是自己人！" },
+  { text: "要不要考慮來當志工？🙋", voice: "要不要考慮來當志工？" }
+];
+
+const wrongRoasts = [
+  { text: "欸～要多看新聞稿喔！📰", voice: "欸！要多看新聞稿喔！" },
+  { text: "這題...我們下次加強！😅", voice: "這題，我們下次加強！" },
+  { text: "沒關係！下一題搶回來！💪", voice: "沒關係！下一題搶回來！" },
+  { text: "提示：答案不是這個 😂", voice: "提示，答案不是這個！" },
+  { text: "誒誒誒～猜錯了啦！", voice: "誒誒誒，猜錯了啦！" },
+  { text: "這個嘛...再想想？🤔", voice: "這個嘛，再想想？" },
+  { text: "好的，我們來複習一下～", voice: "好的，我們來複習一下！" },
+  { text: "下次記得來參加活動！📢", voice: "下次記得來參加活動！" },
+  { text: "嗯...這題有點難對吧？", voice: "嗯，這題有點難對吧？" },
+  { text: "沒事沒事，學到了就好！📚", voice: "沒事沒事，學到了就好！" },
+  { text: "母湯喔～答案是另一個！🙈", voice: "母湯喔！答案是另一個！" },
+  { text: "猜錯了齁～沒關係啦！", voice: "猜錯了齁！沒關係啦！" },
+  { text: "這題送你複習機會！🎁", voice: "這題送你複習機會！" },
+  { text: "QQ 下次一定可以！😢", voice: "QQ，下次一定可以！" },
+  { text: "沒關係～人生本來就有高低！", voice: "沒關係！人生本來就有高低！" },
+  { text: "錯了錯了！但你很勇敢！👏", voice: "錯了錯了！但你很勇敢！" },
+  { text: "這題我也常搞混啦～", voice: "這題我也常搞混啦！" },
+  { text: "Oops！差一點點！", voice: "Oops！差一點點！" },
+  { text: "哎呀～手滑了齁？🖐️", voice: "哎呀！手滑了齁？" },
+  { text: "沒事！我不會告訴別人的 🤫", voice: "沒事！我不會告訴別人的！" }
+];
+
+const timeoutRoasts = [
+  { text: "時間到！想太久囉～⏰", voice: "時間到！想太久囉！" },
+  { text: "欸～發呆了嗎？😴", voice: "欸，發呆了嗎？" },
+  { text: "要加快速度喔！跟不上了！", voice: "要加快速度喔！跟不上了！" },
+  { text: "太慢了啦～下次快一點！", voice: "太慢了啦！下次快一點！" },
+  { text: "時間不等人！趕快答！⚡", voice: "時間不等人！趕快答！" },
+  { text: "在想什麼呢？專心點！😏", voice: "在想什麼呢？專心點！" },
+  { text: "醒醒！題目在這裡！👋", voice: "醒醒！題目在這裡！" },
+  { text: "是不是剛剛恍神了？🌀", voice: "是不是剛剛恍神了？" }
+];
+
+const comboRoasts = [
+  { count: 3, text: "🔥 三連對！", voice: "三連對！好厲害！" },
+  { count: 4, text: "🔥🔥 四連對！！", voice: "四連對！繼續保持！" },
+  { count: 5, text: "🔥🔥🔥 五連對！！！", voice: "五連對！太強了！" },
+  { count: 6, text: "💥 六連對！瘋了！", voice: "六連對！瘋了吧！" },
+  { count: 7, text: "⚡ 七連對！你是神嗎？", voice: "七連對！你是神嗎？" },
+  { count: 8, text: "👑 八連對！跪了！", voice: "八連對！我跪了！" },
+  { count: 9, text: "🌟 九連對！不敢相信！", voice: "九連對！不敢相信！" },
+  { count: 10, text: "🏆 十連對！神中之神！", voice: "十連對！神中之神！" }
+];
+
+// ==================== 題庫（30題）====================
+const questionBank = [
+  {
+    category: "📊 數據題",
+    question: "國教盟第四屆（2023-2025）總共發布了幾篇新聞稿？",
+    options: ["89 篇", "113 篇", "156 篇", "201 篇"],
+    correct: 1,
+    detail: "三年來共發布 113 篇新聞稿，其中 2025 年最多有 57 篇！"
+  },
+  {
+    category: "📊 數據題",
+    question: "三年來國教盟的媒體露出總聲量有幾則？",
+    options: ["3,500 則", "5,200 則", "7,917 則", "10,000 則"],
+    correct: 2,
+    detail: "累計 7,917 則媒體聲量，平均每篇新聞稿獲得約 70 則報導！"
+  },
+  {
+    category: "📊 數據題",
+    question: "2025 年國教盟發布了幾篇新聞稿？",
+    options: ["39 篇", "47 篇", "57 篇", "67 篇"],
+    correct: 2,
+    detail: "2025 年發布 57 篇，是三年來最多的一年！"
+  },
+  {
+    category: "🏆 排名題",
+    question: "2025年哪一則新聞稿獲得最多媒體露出（83則）？",
+    options: ["喪屍煙彈記者會", "加熱菸下架聲明", "青少年性病記者會", "割頸案週年"],
+    correct: 1,
+    detail: "2025/10/20「加熱菸首日下架」聲明獲得 83 則報導，創下單篇最高紀錄！"
+  },
+  {
+    category: "🏆 排名題",
+    question: "三年來哪個議題的新聞稿數量最多？",
+    options: ["校園安全與管理", "菸害與藥物防制", "兒童保護與權益", "教育政策與改革"],
+    correct: 1,
+    detail: "菸害與藥物防制議題共 24 篇，佔總數約 21%，是國教盟近年重點倡議！"
+  },
+  {
+    category: "🏆 排名題",
+    question: "青少年性病記者會（2025/01/15）獲得幾則報導？",
+    options: ["41 則", "51 則", "61 則", "71 則"],
+    correct: 3,
+    detail: "青少女梅毒病例 10 年增長 53 倍的記者會引發 71 則報導！"
+  },
+  {
+    category: "📅 時間題",
+    question: "新北割頸案發生在哪一年？",
+    options: ["2022年", "2023年", "2024年", "2025年"],
+    correct: 1,
+    detail: "2023年12月發生，國教盟隨即發起校園安全與少年事件處理改革倡議。"
+  },
+  {
+    category: "📅 時間題",
+    question: "菸害防制法修法公布是在哪一年？",
+    options: ["2022年", "2023年", "2024年", "2025年"],
+    correct: 1,
+    detail: "2023年公布，國教盟持續監督加熱菸、加味菸管制落實情況。"
+  },
+  {
+    category: "📅 時間題",
+    question: "學生輔導法修法在哪一年三讀通過？",
+    options: ["2023年", "2024年", "2025年", "尚未通過"],
+    correct: 1,
+    detail: "2024/07/09 三讀通過，國教盟肯定修法符合期待！"
+  },
+  {
+    category: "🤝 合作題",
+    question: "三年來國教盟與幾位跨黨派立委合作？",
+    options: ["9 位", "14 位", "19 位", "25 位"],
+    correct: 2,
+    detail: "共與 19 位跨黨派立委合作，推動多項兒少保護與教育改革法案！"
+  },
+  {
+    category: "🤝 合作題",
+    question: "2025年「捍衛加熱菸管制」聯合聲明有多少團體參與？",
+    options: ["54 團體", "98 團體", "156 團體", "173 團體"],
+    correct: 3,
+    detail: "173 個團體聯合發聲，創下國教盟合作規模新高！"
+  },
+  {
+    category: "🤝 合作題",
+    question: "三年來國教盟合作過的專家學者有幾位？",
+    options: ["12 位", "23 位", "34 位", "45 位"],
+    correct: 2,
+    detail: "共有 34 位來自醫學、教育、心理、法律等領域的專家學者參與！"
+  },
+  {
+    category: "⚠️ 警訊題",
+    question: "青少女梅毒病例 10 年增長了幾倍？",
+    options: ["13 倍", "33 倍", "53 倍", "73 倍"],
+    correct: 2,
+    detail: "2025/01/15 記者會揭露，青少女梅毒病例 10 年增長 53 倍！"
+  },
+  {
+    category: "⚠️ 警訊題",
+    question: "早療通報八年來超過多少名兒童錯失黃金治療期？",
+    options: ["5 萬名", "12 萬名", "22 萬名", "35 萬名"],
+    correct: 2,
+    detail: "2025/03/24 記者會指出，八年來超過 22 萬名兒童因量能不足錯失黃金期！"
+  },
+  {
+    category: "⚠️ 警訊題",
+    question: "喪屍煙彈年增長了多少倍？",
+    options: ["12 倍", "52 倍", "132 倍", "232 倍"],
+    correct: 2,
+    detail: "2025/03/11 六大團體聯合記者會揭露，喪屍煙彈年增 132 倍！"
+  },
+  {
+    category: "📈 趨勢題",
+    question: "情緒障礙學生人數飆升了多少？",
+    options: ["11%", "21%", "31%", "41%"],
+    correct: 3,
+    detail: "2025/03/17 國教盟呼籲關注情緒障礙飆升 41% 的校園危機！"
+  },
+  {
+    category: "📈 趨勢題",
+    question: "青少年淋病 12 年來增長了幾倍？",
+    options: ["3 倍", "5 倍", "7 倍", "9 倍"],
+    correct: 2,
+    detail: "2025/01/13 記者會揭露，青少年淋病 12 年來暴增 7 倍！"
+  },
+  {
+    category: "🎯 議題題",
+    question: "「精液豆漿」考卷事件屬於哪個議題？",
+    options: ["校園安全", "性健康教育", "教育政策", "心理健康"],
+    correct: 1,
+    detail: "2025/05/12 性教育師資失格事件，獲得 67 則媒體報導！"
+  },
+  {
+    category: "🎯 議題題",
+    question: "「小烏龜世代」危機指的是什麼問題？",
+    options: ["少子化", "3C成癮", "校園霸凌", "升學壓力"],
+    correct: 1,
+    detail: "2024/10/17 國教盟呼籲正視 3C 成癮危害兒少大腦與情緒發展！"
+  },
+  {
+    category: "🎯 議題題",
+    question: "國教盟 2024 年呼籲重視的「蠟瓶糖之亂」屬於什麼議題？",
+    options: ["食品安全", "兒童保護", "校園管理", "教育政策"],
+    correct: 0,
+    detail: "2024/09/24 呼籲建立完整報關查驗機制，保護兒少消費權益！"
+  },
+  {
+    category: "🏛️ 政策題",
+    question: "國教盟倡議的「兒少家庭部」確定要成立哪個單位？",
+    options: ["兒少保護司", "家庭教育署", "兒童及家庭署", "青少年發展局"],
+    correct: 2,
+    detail: "2025/11/17 政府宣布成立「兒童及家庭署」！"
+  },
+  {
+    category: "🏛️ 政策題",
+    question: "國教盟呼籲教育部把什麼納入學生健康檢查？",
+    options: ["視力篩檢", "心理篩檢", "體適能", "聽力篩檢"],
+    correct: 1,
+    detail: "2025/04/23 呼籲健康檢查全面納入心理篩檢！"
+  },
+  {
+    category: "👥 青年部",
+    question: "國教盟青年部「台灣青少年十大議題調查」收到幾份問卷？",
+    options: ["3,742 份", "5,891 份", "8,743 份", "12,500 份"],
+    correct: 2,
+    detail: "2025/01/21 公布全台首次 8,743 份青少年問卷調查結果！"
+  },
+  {
+    category: "👥 青年部",
+    question: "青少年最關心的第一名議題是什麼？",
+    options: ["校園安全", "分辨網路資訊", "心理健康", "升學壓力"],
+    correct: 1,
+    detail: "2025/10/20 公布「分辨網路資訊」高居第 1 名！"
+  },
+  {
+    category: "👥 青年部",
+    question: "青少年關心議題的第二名是什麼？",
+    options: ["菸毒防制", "心理健康", "校園安全", "升學壓力"],
+    correct: 0,
+    detail: "2025/11/17 公布第二名為「菸毒與心理健康」議題！"
+  },
+  {
+    category: "📰 新聞題",
+    question: "2024 年獎懲準則新聞稿獲得幾則報導？",
+    options: ["30 則", "45 則", "60 則", "75 則"],
+    correct: 2,
+    detail: "2024/05/01 回應國中小學生獎懲準則發布，獲得 60 則報導！"
+  },
+  {
+    category: "📰 新聞題",
+    question: "學習歷程採計記者會（2025/06/05）獲得幾則報導？",
+    options: ["34 則", "44 則", "54 則", "64 則"],
+    correct: 2,
+    detail: "台大張耀文教授與國教盟呼籲廢除學習歷程採計，獲 54 則報導！"
+  },
+  {
+    category: "🎓 活動題",
+    question: "國教盟三年來舉辦的活動總場次是？",
+    options: ["156 場", "208 場", "286 場", "312 場"],
+    correct: 2,
+    detail: "三年共 286 場活動！2023年89場、2024年89場、2025年108場！"
+  },
+  {
+    category: "🎓 活動題",
+    question: "2025 年神經多樣性國際研討會在哪裡舉辦？",
+    options: ["台北", "新北", "台中", "高雄"],
+    correct: 1,
+    detail: "2025/06/21 在亞東醫院舉辦神經多樣性生活導師國際研討會！"
+  },
+  {
+    category: "🔥 綜合題",
+    question: "三年來國教盟的長期合作夥伴有幾個？",
+    options: ["6 個", "9 個", "12 個", "15 個"],
+    correct: 2,
+    detail: "共有 12 個長期合作夥伴，包括各類專業團體與基金會！"
+  }
+];
+
+// ==================== 遊戲變數 ====================
+const TOTAL_QUESTIONS = 15;
+let gameQuestions = [];
+let currentQuestion = 0;
+let score = 0;
+let timer = null;
+let timeLeft = 15;
+let answered = false;
+let combo = 0;
+let usedCorrectRoasts = [];
+let usedWrongRoasts = [];
+
+// 隨機打亂陣列
+function shuffle(array) {
+  const arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+// 隨機打亂選項並更新正確答案索引
+function shuffleOptions(question) {
+  const options = question.options.map((opt, i) => ({ text: opt, isCorrect: i === question.correct }));
+  const shuffled = shuffle(options);
+  return {
+    ...question,
+    options: shuffled.map(o => o.text),
+    correct: shuffled.findIndex(o => o.isCorrect)
+  };
+}
+
+// 取得不重複的吐槽
+function getUniqueRoast(roasts, usedList) {
+  if (usedList.length >= roasts.length) usedList.length = 0;
+  let available = roasts.filter((_, i) => !usedList.includes(i));
+  const idx = Math.floor(Math.random() * available.length);
+  const originalIdx = roasts.indexOf(available[idx]);
+  usedList.push(originalIdx);
+  return available[idx];
+}
+
+// ==================== 粒子效果 ====================
+function createParticles() {
+  const container = document.getElementById('particles');
+  for (let i = 0; i < 20; i++) {
+    const particle = document.createElement('div');
+    particle.className = 'particle';
+    particle.style.width = Math.random() * 10 + 5 + 'px';
+    particle.style.height = particle.style.width;
+    particle.style.left = Math.random() * 100 + '%';
+    particle.style.animationDelay = Math.random() * 15 + 's';
+    particle.style.animationDuration = Math.random() * 10 + 15 + 's';
+    container.appendChild(particle);
+  }
+}
+
+// ==================== 遊戲邏輯 ====================
+function startGame() {
+  initAudio();
+  playSound('start');
+  startBGM();
+  
+  // 隨機抽 15 題並打亂選項
+  gameQuestions = shuffle(questionBank).slice(0, TOTAL_QUESTIONS).map(shuffleOptions);
+  
+  setTimeout(() => {
+    speak("歡迎來到國教盟知識王！準備好了嗎？開始囉！", 1.1, 1.05);
+  }, 200);
+  
+  document.getElementById('startScreen').classList.add('hidden');
+  document.getElementById('gameScreen').style.display = 'flex';
+  document.getElementById('hostControls').style.display = 'flex';
+  
+  currentQuestion = 0;
+  score = 0;
+  combo = 0;
+  usedCorrectRoasts = [];
+  usedWrongRoasts = [];
+  document.getElementById('score').textContent = '0';
+  updateProgress();
+  
+  setTimeout(() => showQuestion(), 2000);
+}
+
+function updateProgress() {
+  const progress = (currentQuestion / TOTAL_QUESTIONS) * 100;
+  document.getElementById('progressBar').style.width = progress + '%';
+}
+
+function showQuestion() {
+  answered = false;
+  const q = gameQuestions[currentQuestion];
+  
+  document.getElementById('questionNum').textContent = `第 ${currentQuestion + 1} / ${TOTAL_QUESTIONS} 題`;
+  document.getElementById('category').textContent = q.category;
+  document.getElementById('questionText').textContent = q.question;
+  
+  const optionsGrid = document.getElementById('optionsGrid');
+  optionsGrid.innerHTML = '';
+  
+  const letters = ['A', 'B', 'C', 'D'];
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.innerHTML = `<span class="option-letter">${letters[i]}</span><span>${opt}</span>`;
+    btn.onclick = () => selectAnswer(i);
+    optionsGrid.appendChild(btn);
+  });
+  
+  document.getElementById('questionArea').style.display = 'flex';
+  document.getElementById('answerReveal').style.display = 'none';
+  
+  timeLeft = 15;
+  const timerText = document.getElementById('timer');
+  const timerRing = document.getElementById('timerRing');
+  const timerProgress = document.getElementById('timerProgress');
+  
+  timerText.textContent = timeLeft;
+  timerText.className = 'timer-text';
+  timerRing.className = 'timer-ring';
+  timerProgress.style.strokeDashoffset = '0';
+  
+  const circumference = 163.36;
+  
+  clearInterval(timer);
+  timer = setInterval(() => {
+    timeLeft--;
+    timerText.textContent = timeLeft;
+    timerProgress.style.strokeDashoffset = circumference - (timeLeft / 15) * circumference;
+    
+    if (timeLeft <= 3) {
+      timerRing.className = 'timer-ring danger';
+      timerText.className = 'timer-text danger';
+      playSound('tick');
+    } else if (timeLeft <= 7) {
+      timerRing.className = 'timer-ring warning';
+    }
+    
+    if (timeLeft === 5 && !answered) {
+      speak("快一點！", 1.3, 1.2);
+    }
+    
+    if (timeLeft <= 0) {
+      clearInterval(timer);
+      if (!answered) {
+        playSound('wrong');
+        combo = 0;
+        revealAnswer(-1);
+      }
+    }
+  }, 1000);
+}
+
+function selectAnswer(index) {
+  if (answered) return;
+  answered = true;
+  clearInterval(timer);
+  playSound('click');
+  
+  const q = gameQuestions[currentQuestion];
+  const buttons = document.querySelectorAll('.option-btn');
+  
+  buttons.forEach((btn, i) => {
+    btn.disabled = true;
+    if (i === q.correct) btn.classList.add('correct');
+    else if (i === index) btn.classList.add('wrong');
+  });
+  
+  if (index === q.correct) {
+    score += 1;
+    combo += 1;
+    document.getElementById('score').textContent = score;
+    playSound('correct');
+    if (combo >= 3) showCombo(combo);
+  } else {
+    combo = 0;
+    playSound('wrong');
+  }
+  
+  setTimeout(() => revealAnswer(index), 1200);
+}
+
+function showCombo(num) {
+  const comboData = comboRoasts.find(c => c.count === num) || comboRoasts[comboRoasts.length - 1];
+  
+  const comboEl = document.createElement('div');
+  comboEl.className = 'combo';
+  comboEl.textContent = comboData.text;
+  document.body.appendChild(comboEl);
+  setTimeout(() => comboEl.remove(), 1000);
+  
+  speak(comboData.voice, 1.2, 1.2);
+  showStarBurst();
+}
+
+function showStarBurst() {
+  const container = document.createElement('div');
+  container.className = 'stars-burst';
+  const stars = ['⭐', '✨', '🌟', '💫'];
+  for (let i = 0; i < 12; i++) {
+    const star = document.createElement('span');
+    star.className = 'star';
+    star.textContent = stars[Math.floor(Math.random() * stars.length)];
+    const angle = (i / 12) * Math.PI * 2;
+    const distance = 80 + Math.random() * 40;
+    star.style.setProperty('--tx', Math.cos(angle) * distance + 'px');
+    star.style.setProperty('--ty', Math.sin(angle) * distance + 'px');
+    container.appendChild(star);
+  }
+  document.body.appendChild(container);
+  setTimeout(() => container.remove(), 1000);
+}
+
+function showFlash(type) {
+  const flash = document.createElement('div');
+  flash.className = 'screen-flash ' + type;
+  document.body.appendChild(flash);
+  setTimeout(() => flash.remove(), 500);
+}
+
+function shakeScreen() {
+  document.body.classList.add('shake');
+  setTimeout(() => document.body.classList.remove('shake'), 500);
+}
+
+function revealAnswer(selected) {
+  const q = gameQuestions[currentQuestion];
+  const isCorrect = selected === q.correct;
+  const isTimeout = selected === -1;
+  
+  document.getElementById('questionArea').style.display = 'none';
+  document.getElementById('answerReveal').style.display = 'flex';
+  
+  let icon, text, roast;
+  
+  if (isCorrect) {
+    icon = '✅';
+    text = '答對了！';
+    const r = getUniqueRoast(correctRoasts, usedCorrectRoasts);
+    roast = r.text;
+    showFlash('success');
+    setTimeout(() => speak("答對了！" + r.voice, 1.15, 1.1), 300);
+  } else if (isTimeout) {
+    icon = '⏰';
+    text = '時間到！';
+    const r = timeoutRoasts[Math.floor(Math.random() * timeoutRoasts.length)];
+    roast = r.text;
+    showFlash('warning');
+    setTimeout(() => speak(r.voice, 1.1, 0.9), 300);
+  } else {
+    icon = '❌';
+    text = '答錯了！';
+    const r = getUniqueRoast(wrongRoasts, usedWrongRoasts);
+    roast = r.text;
+    showFlash('wrong');
+    shakeScreen();
+    setTimeout(() => speak("答錯了！" + r.voice, 1.1, 0.95), 300);
+  }
+  
+  document.getElementById('revealIcon').textContent = icon;
+  document.getElementById('revealText').textContent = text;
+  document.getElementById('revealRoast').textContent = roast;
+  document.getElementById('revealDetail').textContent = q.detail;
+  
+  document.querySelector('.next-btn').textContent = 
+    currentQuestion === TOTAL_QUESTIONS - 1 ? '🏆 查看結果' : '下一題 →';
+}
+
+function nextQuestion() {
+  playSound('click');
+  currentQuestion++;
+  updateProgress();
+  
+  if (currentQuestion >= TOTAL_QUESTIONS) {
+    showEndScreen();
+  } else {
+    showQuestion();
+  }
+}
+
+function showEndScreen() {
+  stopBGM();
+  playSound('win');
+  
+  document.getElementById('gameScreen').style.display = 'none';
+  document.getElementById('hostControls').style.display = 'none';
+  document.getElementById('endScreen').style.display = 'flex';
+  
+  document.getElementById('finalScore').textContent = `${score} / ${TOTAL_QUESTIONS}`;
+  
+  let message = '', icon = '🏆', voice = '';
+  const wrong = TOTAL_QUESTIONS - score;
+  const pct = score / TOTAL_QUESTIONS;
+  
+  // 高分區：答對越多稱讚越浮誇
+  if (score === 15) {
+    message = '🎉 滿分！傳說中的國教盟之神！請收下我的膝蓋！';
+    voice = '滿分！傳說中的國教盟之神！請收下我的膝蓋！太強了吧！';
+    icon = '👑';
+  } else if (score >= 14) {
+    message = '🌟 14題！你根本是秘書長等級的！差點滿分耶！';
+    voice = '14題！你根本是秘書長等級的！差點滿分耶！太厲害了！';
+    icon = '🥇';
+  } else if (score >= 12) {
+    message = '🔥 12題以上！資深會員認證！可以來當志工了！';
+    voice = '12題以上！資深會員認證！可以來當志工了！';
+    icon = '🥇';
+  } else if (score >= 10) {
+    message = '👏 10題以上！很棒耶！常常關注國教盟齁？';
+    voice = '10題以上！很棒耶！常常關注國教盟齁？繼續保持！';
+    icon = '🥈';
+  } else if (score >= 8) {
+    message = '👍 8題！中上程度！是用心的會員！';
+    voice = '8題！中上程度！是用心的會員！';
+    icon = '🥈';
+  // 低分區：答錯越多越搞笑吐槽
+  } else if (score >= 6) {
+    message = '😅 6題...勉強及格啦！下次記得多看新聞稿喔～';
+    voice = '6題，勉強及格啦！下次記得多看新聞稿喔！';
+    icon = '🥉';
+  } else if (score >= 4) {
+    message = '🤔 4題...你是不是加入國教盟那天在睡覺？';
+    voice = '4題，你是不是加入國教盟那天在睡覺？醒一醒！';
+    icon = '😴';
+  } else if (score >= 2) {
+    message = '😂 只對2題...是用猜的對吧？承認！';
+    voice = '只對2題，是用猜的對吧？承認！沒關係啦！';
+    icon = '🎲';
+  } else if (score === 1) {
+    message = '💀 1題...這機率比亂猜還低耶！是故意的嗎？';
+    voice = '1題，這機率比亂猜還低耶！是故意的嗎？';
+    icon = '🙈';
+  } else {
+    message = '☠️ 0題...你確定你是國教盟的嗎？還是走錯棚？';
+    voice = '0題！你確定你是國教盟的嗎？還是走錯棚了？歡迎重新認識國教盟！';
+    icon = '🚪';
+  }
+  
+  document.getElementById('endIcon').textContent = icon;
+  document.getElementById('endMessage').textContent = message;
+  
+  setTimeout(() => speak(`挑戰完成！你答對了 ${score} 題！` + voice, 1.05, 1.0), 500);
+  
+  if (pct >= 0.6) launchConfetti();
+}
+
+function restartGame() {
+  playSound('click');
+  document.getElementById('endScreen').style.display = 'none';
+  document.getElementById('startScreen').classList.remove('hidden');
+  document.getElementById('progressBar').style.width = '0%';
+}
+
+function launchConfetti() {
+  const canvas = document.getElementById('confetti');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  
+  const particles = [];
+  const colors = ['#E86E4E', '#FFD700', '#10B981', '#3D4451', '#fff'];
+  
+  for (let i = 0; i < 150; i++) {
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height - canvas.height,
+      size: Math.random() * 10 + 5,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      speed: Math.random() * 3 + 2,
+      angle: Math.random() * Math.PI * 2,
+      spin: Math.random() * 0.2 - 0.1
+    });
+  }
+  
+  function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach((p, i) => {
+      p.y += p.speed;
+      p.x += Math.sin(p.angle) * 2;
+      p.angle += p.spin;
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.angle);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size);
+      ctx.restore();
+      if (p.y > canvas.height) particles.splice(i, 1);
+    });
+    if (particles.length > 0) requestAnimationFrame(animate);
+  }
+  animate();
+}
+
+// 鍵盤控制
+document.addEventListener('keydown', (e) => {
+  if (e.code === 'Space' && !answered && document.getElementById('gameScreen').style.display === 'flex') {
+    e.preventDefault();
+    answered = true;
+    clearInterval(timer);
+    const q = gameQuestions[currentQuestion];
+    const buttons = document.querySelectorAll('.option-btn');
+    buttons.forEach((btn, i) => {
+      btn.disabled = true;
+      if (i === q.correct) btn.classList.add('correct');
+    });
+    score += 1;
+    combo += 1;
+    document.getElementById('score').textContent = score;
+    playSound('correct');
+    if (combo >= 3) showCombo(combo);
+    setTimeout(() => revealAnswer(q.correct), 800);
+  }
+  
+  if (e.code === 'ArrowRight' && document.getElementById('answerReveal').style.display === 'flex') {
+    nextQuestion();
+  }
+  
+  if (e.code === 'KeyR') location.reload();
+});
+
+createParticles();
+</script>
+</body>
+</html>
