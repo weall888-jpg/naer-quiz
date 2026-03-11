@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://naer-tw.github.io/naer-quiz/sitemap.xml
